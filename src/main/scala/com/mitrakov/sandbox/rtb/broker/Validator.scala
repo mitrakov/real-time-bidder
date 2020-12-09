@@ -2,6 +2,9 @@ package com.mitrakov.sandbox.rtb.broker
 
 import com.mitrakov.sandbox.rtb.models.{BidRequest, Device, Impression, Site, User, Banner, Campaign}
 
+/**
+ * Validator performs filtering of a campaign list according to the rules implemented in descendants
+ */
 trait Validator {
   def validateUserData(campaign: Campaign, user: Option[User], device: Option[Device]): Boolean
   def validateBanners(campaign: Campaign, impressions: List[Impression]): List[Banner]

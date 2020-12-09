@@ -8,9 +8,9 @@ package object models {
   case class BidResponse(id: String, bidRequestId: String, price: Double, adId: Option[String], banner: Option[Banner])
 
   case class Campaign(id: Int, country: String, targeting: Targeting, banners: List[Banner], bid: Double)
-  case class Targeting(targetedSiteIds: Set[String]) // list of site IDs could be potentially very long
+  case class Targeting(targetedSiteIds: Set[Int]) // we use HashSet for quick lookups
   case class Banner(id: Int, src: String, width: Int, height: Int)
-  case class Site(id: String, domain: String)
+  case class Site(id: Int, domain: String)
   case class User(id: String, geo: Option[Geo])
   case class Device(id: String, geo: Option[Geo])
   case class Geo(country: Option[String])
