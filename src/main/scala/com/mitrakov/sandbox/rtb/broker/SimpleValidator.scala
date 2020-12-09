@@ -13,16 +13,18 @@ import com.typesafe.scalalogging.LazyLogging
  *    in other validators there might be more complex logic, e.g. 2 closest countries (US, Canada) may pass filtering
  */
 class SimpleValidator extends Validator with LazyLogging {
+  import com.mitrakov.sandbox.rtb.Utils.{LoggerOps, LoggerUps}
+
   override def validateBids(campaign: Campaign, impressions: List[Impression]): Boolean = {
     impressions.map(_.bidFloor) exists {_ match {
       case Some(bid) => bid <= campaign.bid
       case None => true // publisher's bidFloor is None => any bid acceptable
     }}
-  }
+  }.logIfFalse(s"$campaign is skipped by bid floor: $impressions")
 
   override def validateSite(campaign: Campaign, site: Site): Boolean = {
     campaign.targeting.targetedSiteIds.contains(site.id)
-  }
+  }.logIfFalse(s"$campaign is skipped by site $site")
 
   override def validateBanners(campaign: Campaign, impressions: List[Impression]): List[Banner] = {
     impressions flatMap {
@@ -32,7 +34,7 @@ class SimpleValidator extends Validator with LazyLogging {
       case Impression(_, wmin, Some(wmax), w, hmin, Some(hmax), h, _, _)             => campaign.banners.filter(banner => banner.height <= hmax && banner.width <= wmax)
       case impression => logger.warn(s"Incorrect impression data: $impression; campaign $campaign is filtered"); Nil
     }
-  }
+  }.logIfFalse(s"$campaign is skipped by banners: $impressions")
 
   override def validateUserData(campaign: Campaign, user: Option[User], device: Option[Device]): Boolean = {
     val userCountry = for {
@@ -55,5 +57,5 @@ class SimpleValidator extends Validator with LazyLogging {
       case (None, Some(country2)) => campaignCountry == country2
       case _ => false
     }
-  }
+  }.logIfFalse(s"$campaign is skipped by user data $user; $device")
 }
