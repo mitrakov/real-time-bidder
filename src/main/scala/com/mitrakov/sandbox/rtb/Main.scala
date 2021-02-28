@@ -15,6 +15,7 @@ import doobie.util.transactor.Transactor
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
 
+// added to Wiki
 object Main extends App with LazyLogging {
   implicit val system: ActorSystem = ActorSystem("rtb-system")
 
